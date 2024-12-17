@@ -19,6 +19,10 @@ void seviyeAtla(int seviye, int tecrube);
 int kolayKesif(float para);
 int ortaKesif(float para);
 int zorKesif(float para);
+int sifaliBitkiBulma(void);
+int kolayKesifSavas(int ceviklik, int guc, int can, int dayaniklilik, int stres);
+int ortaKesifSavas(int ceviklik, int guc, int can, int dayaniklilik, int stres);
+int zorKesifSavas(int ceviklik, int guc, int can, int dayaniklilik, int stres);
 
 int main(int argc, const char * argv[]) {
     
@@ -32,13 +36,15 @@ int main(int argc, const char * argv[]) {
     fgets(calgi, sizeof(calgi),stdin);
     
     //temel nitelikler
-    int can=50; int tokluk=50; int uyku=50; int hijyen=50; float para=10.0; int tecrube=0; int stres=50; int moral=50; int sans=50;
+    int can=50; int tokluk=50; int uyku=50; int hijyen=50; float para=10.0; int tecrube=0; int stres=30; int moral=50; int sans=50;
     
     //beceriler
     int guc=3; int ceviklik=3; int dayaniklilik=3; int karizma=3; int toplayicilik=3; int seviye=1;
     
-    int secim; int yiyecekSecim;; int icecekSecim;
+    int secim; int yiyecekSecim;; int icecekSecim; int avcilikIhtimal; float avcilikSans;
     int beceriGelistir;
+    
+    int kolaySonuc; int ortaSonuc; int zorSonuc;
     while(1){
     basla:
         secim=anaMenu();
@@ -480,37 +486,155 @@ int main(int argc, const char * argv[]) {
                 secim=macerayaAtil();
                 switch (secim) {
                     case 1:
-                        printf("\nhmm.. orman yesermis");
+                        avcilikSans=((float)toplayicilik*4)/100;
+                        printf("\nhmm.. orman yesermis, biraz yiyecek bakiniyorsun.\n%f ihtimalle sifali bitki bulabilir, %f ihtimalle av hayvanı avlayabilirsin.",avcilikSans,avcilikSans/2);
+                        avcilikIhtimal=sifaliBitkiBulma();
+                        if(avcilikIhtimal<=(avcilikSans*100)){
+                            printf("etrafta dolanirken sifali bitkilere rastladın.. +10 tokluk kazanildi");
+                            sans+=10;
+                            printf("buldugun bitkiler sans niteligini 10 artirdi! artik sifaci ile aralari duzeltebilirsin!");
+                            if(sans>100){
+                                sans=100;
+                                printf("\nsans seviyesi: %d",sans);
+                            }
+                            else{
+                                printf("\nsans seviyesi: %d",sans);
+                            }
+                            tokluk+=10;
+                            if(tokluk>=100){
+                                tokluk=100;
+                                printf("\ntokluk maksimum seviyeye ulasti! Odul: +20 can");
+                                can+=20;
+                                if(can>=100){
+                                    can=100;
+                                    printf("\ncan seviyesi: %d\ttokluk: %d",can,tokluk);
+                                }
+                                else{
+                                    printf("\ncan seviyesi: %d\ttokluk: %d",can,tokluk);
+                                }
+                            }
+                            else{
+                                printf("\n+10 tokluk kazandin. Son durum:\ncan seviyesi: %d\ttokluk: %d",can,tokluk);
+                            }
+                        }
+                        else if((avcilikSans * 100) < avcilikIhtimal && avcilikIhtimal < ((avcilikSans * 100) + ((avcilikSans * 100) / 2))){
+                            printf("\nSansli gunundesin %s!Bu sansini kullanarak ormanda gezerken karsina cikan yabaniyi avladin! Odul: 50 tokluk! Kaybedilen: -10 sans.",ad);
+                            tokluk+=50;
+                            if(tokluk>=100){
+                                tokluk=100;
+                                printf("\ntokluk maksimum seviyeye ulasti! Odul: +20 can");
+                                can+=20;
+                                if(can>=100){
+                                    can=100;
+                                    printf("\ncan seviyesi: %d\ttokluk: %d",can,tokluk);
+                                }
+                                else{
+                                    printf("\ncan seviyesi: %d\ttokluk: %d",can,tokluk);
+                                }
+                            }
+                            else{
+                                printf("\n+10 tokluk kazandin. Son durum:\ncan seviyesi: %d\ttokluk: %d",can,tokluk);
+                            }
+                            sans=sans-10;
+                            if(sans<=0){
+                                printf("\nhay aksi! sans niteligin cok düstü. Kayiplar: -5 can");
+                                can=can-5;
+                                if(can<=0){
+                                    can=0;
+                                    printf("\ncan degeri 0'a düstü, oyun bitti.");
+                                    printf("\ncan seviyesi: %d",can);
+                                    goto Son;
+                                }
+                                else{
+                                    printf("c\nan seviyesi: %d",can);
+                                }
+                            }
+                            else{
+                                printf("\nsans seviyesi: %d",sans);
+                            }
+                        }
+                        else{
+                            printf("\nSans senden yana gitmedi, baska bir gun tekrar dene.");
+                            printf("\nBedel: -20 uyku");
+                            uyku=uyku-20;
+                            printf("\nuyku seviyesi: %d",uyku);
+                            if(uyku<=0){
+                                uyku=0;
+                                can=can-5;
+                                if(can<=0){
+                                    can=0;
+                                    printf("\ncok uykusuz kaldin, uyku seviyesi 0'a dustu. Kayiplar: -5 can");
+                                    printf("\ncan seviyesi minimum degere ulasti, oyun bitti!");
+                                    printf("\nuyku seviyesi: %d\tcan seviyesi: %d",uyku,can);
+                                    goto Son;
+                                }
+                                else{
+                                    printf("\ncok uykusuz kaldin, uyku seviyesi 0'a dustu. Kayiplar: -5 can");
+                                    printf("\nuyku seviyesi: %d\tcan seviyesi: %d",uyku,can);
+                                }
+                            }
+                            else{
+                                printf("\nbiraz yoruldun...\nuyku seviyesi: %d",uyku);
+                            }
+                        }
+                        
                         break;
                     case 2:
-                        printf("\norman kesfediliyor");
-                        para=kolayKesif(para);
-                        printf("\naltin miktari: %f",para);
-                        tecrube+=30;
-                        if(tecrube>=100){
-                            printf("\n\ntebrikler,tecrube 100'u asti!");
-                            goto basla5;
+                        printf("\norman kesfediliyor\nHaydutla karsilastin!");
+                        kolaySonuc=kolayKesifSavas(ceviklik, guc, can, dayaniklilik, stres);
+                        if(kolaySonuc==1){
+                            para=kolayKesif(para);
+                            printf("\naltin miktari: %f",para);
+                            tecrube+=30;
+                            if(tecrube>=100){
+                                printf("\n\ntebrikler,tecrube 100'u asti!");
+                                goto basla5;
+                            }
+                        }
+                        else if(kolaySonuc==-1){
+                            printf("\ngalip gelemedin, hicbir kazanim elde etmedin.");
+                        }
+                        else{
+                            printf("\nbir seyler ters gitti...\nAna menuye yonlendiriliyorsun.");
+                            goto basla;
                         }
                         break;
                     case 3:
-                        printf("\nkayaliklar kesfediliyor");
-                        para=ortaKesif(para);
-                        printf("\naltin miktari: %f",para);
-                        tecrube+=60;
-                        if(tecrube>=100){
-                            printf("\n\ntebrikler,tecrube 100'u asti!");
-                            goto basla5;
+                        ortaSonuc= ortaKesifSavas(ceviklik, guc, can, dayaniklilik, stres);
+                        if(ortaSonuc==1){
+                            para=ortaKesif(para);
+                            printf("\naltin miktari: %f",para);
+                            tecrube+=60;
+                            if(tecrube>=100){
+                                printf("\n\ntebrikler,tecrube 100'u asti!");
+                                goto basla5;
+                            }
+                        }
+                        else if(ortaSonuc==-1){
+                            printf("\ngalip gelemedin, hicbir kazanim elde etmedin.");
+                        }
+                        else{
+                            printf("\nbir seyler ters gitti...\nAna menuye yonlendiriliyorsun.");
+                            goto basla;
                         }
                         break;
                     case 4:
-                        printf("\nvadi kesfediliyor");
-                        printf("\nkayaliklar kesfediliyor");
-                        para=zorKesif(para);
-                        printf("\naltin miktari: %f",para);
-                        tecrube+=90;
-                        if(tecrube>=100){
-                            printf("\n\ntebrikler,tecrube 100'u asti!");
-                            goto basla5;
+                        zorSonuc= zorKesifSavas(ceviklik, guc, can, dayaniklilik, stres);
+                        if(zorSonuc==1){
+                            para=zorKesif(para);
+                            printf("\naltin miktari: %f",para);
+                            tecrube+=60;
+                            if(tecrube>=100){
+                                printf("\n\ntebrikler,tecrube 100'u asti!");
+                                goto basla5;
+                            }
+                        }
+                        else if(zorSonuc==-1){
+                            printf("\ngalip gelemedin, hicbir kazanim elde etmedin.");
+                        }
+                        else{
+                            printf("\nbir seyler ters gitti...\nAna menuye yonlendiriliyorsun.");
+                            goto basla;
                         }
                         break;
                     case 5:
@@ -677,4 +801,542 @@ void seviyeAtla(int seviye, int tecrube){
     tecrube=0;
     printf("\n\nYeni statlar:\nseviye:%d\ntecrube:%d",seviye,tecrube);
 }
+int sifaliBitkiBulma(void){
+    int random= rand()%99+1;
+    printf("%d",random);
+    return random;
+}
+int kolayKesifSavas(int ceviklik, int guc, int can, int dayaniklilik, int stres){
+    srand(time(NULL));
+    int haydutGuc=rand()%2+1;
+    int haydutDayaniklilik=rand()%2+1;
+    int haydutCeviklik=rand()%2+1;
+    int haydutCan=5;
+    int secim;
+    
+    savasiBaslat:
+    
+    printf("\n**Dusman becerileri**");
+    printf("\nguc: %d\tdayaniklilik: %d\tceviklik: %d",haydutGuc,haydutDayaniklilik,haydutCeviklik);
+    printf("\nSaldirmak icin 1, kacmak icin 2 secin: ");
+    scanf("%d",&secim);
+    float kacmaIhtimali=(4*ceviklik)/100;
+    int kacmaDurumu=rand()%99+1;
+    switch (secim) {
+        case 1:
+            if(stres<50){
+                printf("\nsavas basliyor...");
+                if(guc>=haydutGuc){
+                    do {
+                        printf("\ndusmana %d hasar verildi!",4*guc);
+                        printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                        haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                        printf("\ndusmanin kalan cani: %d",haydutCan);
+                        printf("\nhaydut sana saldirdi!");
+                        printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                        can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                        printf("\nkalan can: %d",can);
+                    } while (can>0 && haydutCan>0);
+                    if(can<=0&&haydutCan>0){
+                        printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                        stres+=30;
+                        if(stres>=100){
+                            stres=100;
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                        }
+                        else{
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                        }
+                        return -1;
+                        break;
+                    }
+                    else if(can>0&&haydutCan<=0){
+                        printf("\nTebrikler! Haydutu yendin");
+                        return 1;
+                        break;
+                    }
+                }
+                else{
+                    do {
+                        printf("\nhaydut sana saldirdi!");
+                        printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                        can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                        printf("\nkalan can: %d",can);
+                        printf("\ndusmana %d hasar verildi!",4*guc);
+                        printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                        haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                        printf("\ndusmanin kalan cani: %d",haydutCan);
+                    } while (can>0 && haydutCan>0);
+                    if(can<=0&&haydutCan>0){
+                        printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                        stres+=30;
+                        if(stres>=100){
+                            stres=100;
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                        }
+                        else{
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                        }
+                        return -1;
+                        break;
+                    }
+                    else if(can>0&&haydutCan<=0){
+                        printf("\nTebrikler! Haydutu yendin");
+                        return 1;
+                        break;
+                    }
+                }
+            }
+            else{
+                printf("\nstres seviyen cok fazla!");
+                printf("\nstres seviyesi: %d",stres);
+                printf("savasa girilemiyor.");
+                return -1;
+            }
+            break;
+        case 2:
+            if(stres<50){
+                if(kacmaDurumu<kacmaIhtimali*100){
+                    printf("\nhayduttan basariyla kacildi.");
+                    return 1;
+                    break;
+                }
+                else{
+                    printf("\nhayduttan kacamadin!Savas basliyor..");
+                    if(guc>=haydutGuc){
+                        do {
+                            printf("\ndusmana %d hasar verildi!",4*guc);
+                            printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                            haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                            printf("\ndusmanin kalan cani: %d",haydutCan);
+                            printf("\nhaydut sana saldirdi!");
+                            printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                            can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                            printf("\nkalan can: %d",can);
+                        } while (can>0 && haydutCan>0);
+                        if(can<=0&&haydutCan>0){
+                            printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                            stres+=30;
+                            if(stres>=100){
+                                stres=100;
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                                printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                            }
+                            else{
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            }
+                            return -1;
+                            break;
+                        }
+                        else if(can>0&&haydutCan<=0){
+                            printf("\nTebrikler! Haydutu yendin");
+                            return 1;
+                            break;
+                        }
+                    }
+                    else{
+                        do {
+                            printf("\nhaydut sana saldirdi!");
+                            printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                            can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                            printf("\nkalan can: %d",can);
+                            printf("\ndusmana %d hasar verildi!",4*guc);
+                            printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                            haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                            printf("\ndusmanin kalan cani: %d",haydutCan);
+                        } while (can>0 && haydutCan>0);
+                        if(can<=0&&haydutCan>0){
+                            printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                            stres+=30;
+                            if(stres>=100){
+                                stres=100;
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                                printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                            }
+                            else{
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            }
+                            return -1;
+                            break;
+                        }
+                        else if(can>0&&haydutCan<=0){
+                            printf("\nTebrikler! Haydutu yendin");
+                            return 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            else{
+                printf("\nstres seviyen cok fazla!");
+                printf("\nstres seviyesi: %d",stres);
+                printf("\nsavasa girilemiyor.");
+                return -1;
+            }
+                break;
+        default:
+            printf("hatali secim yapildi.");
+            return 0;
+            break;
+    }
+    return 0;
+}
+
+int ortaKesifSavas(int ceviklik, int guc, int can, int dayaniklilik, int stres){
+    srand(time(NULL));
+    int haydutGuc=rand()%3+4;
+    int haydutDayaniklilik=rand()%3+4;
+    int haydutCeviklik=rand()%3+4;
+    int haydutCan=15;
+    int secim;
+    
+    savasiBaslat:
+    
+    printf("\n**Dusman becerileri**");
+    printf("\nguc: %d\tdayaniklilik: %d\tceviklik: %d",haydutGuc,haydutDayaniklilik,haydutCeviklik);
+    printf("\nSaldirmak icin 1, kacmak icin 2 secin: ");
+    scanf("%d",&secim);
+    float kacmaIhtimali=(4*ceviklik)/100;
+    int kacmaDurumu=rand()%99+1;
+    switch (secim) {
+        case 1:
+            if(stres<50){
+                printf("\nsavas basliyor...");
+                if(guc>=haydutGuc){
+                    do {
+                        printf("\ndusmana %d hasar verildi!",4*guc);
+                        printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                        haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                        printf("\ndusmanin kalan cani: %d",haydutCan);
+                        printf("\nhaydut sana saldirdi!");
+                        printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                        can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                        printf("\nkalan can: %d",can);
+                    } while (can>0 && haydutCan>0);
+                    if(can<=0&&haydutCan>0){
+                        printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                        stres+=30;
+                        if(stres>=100){
+                            stres=100;
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                        }
+                        else{
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                        }
+                        return -1;
+                        break;
+                    }
+                    else if(can>0&&haydutCan<=0){
+                        printf("\nTebrikler! Haydutu yendin");
+                        return 1;
+                        break;
+                    }
+                }
+                else{
+                    do {
+                        printf("\nhaydut sana saldirdi!");
+                        printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                        can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                        printf("\nkalan can: %d",can);
+                        printf("\ndusmana %d hasar verildi!",4*guc);
+                        printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                        haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                        printf("\ndusmanin kalan cani: %d",haydutCan);
+                    } while (can>0 && haydutCan>0);
+                    if(can<=0&&haydutCan>0){
+                        printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                        stres+=30;
+                        if(stres>=100){
+                            stres=100;
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                        }
+                        else{
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                        }
+                        return -1;
+                        break;
+                    }
+                    else if(can>0&&haydutCan<=0){
+                        printf("\nTebrikler! Haydutu yendin");
+                        return 1;
+                        break;
+                    }
+                }
+            }
+            else{
+                printf("\nstres seviyen cok fazla!");
+                printf("\nstres seviyesi: %d",stres);
+                printf("savasa girilemiyor.");
+                return -1;
+            }
+            break;
+        case 2:
+            if(stres<50){
+                if(kacmaDurumu<kacmaIhtimali*100){
+                    printf("\nhayduttan basariyla kacildi.");
+                    return 1;
+                    break;
+                }
+                else{
+                    printf("\nhayduttan kacamadin!Savas basliyor..");
+                    if(guc>=haydutGuc){
+                        do {
+                            printf("\ndusmana %d hasar verildi!",4*guc);
+                            printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                            haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                            printf("\ndusmanin kalan cani: %d",haydutCan);
+                            printf("\nhaydut sana saldirdi!");
+                            printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                            can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                            printf("\nkalan can: %d",can);
+                        } while (can>0 && haydutCan>0);
+                        if(can<=0&&haydutCan>0){
+                            printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                            stres+=30;
+                            if(stres>=100){
+                                stres=100;
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                                printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                            }
+                            else{
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            }
+                            return -1;
+                            break;
+                        }
+                        else if(can>0&&haydutCan<=0){
+                            printf("\nTebrikler! Haydutu yendin");
+                            return 1;
+                            break;
+                        }
+                    }
+                    else{
+                        do {
+                            printf("\nhaydut sana saldirdi!");
+                            printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                            can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                            printf("\nkalan can: %d",can);
+                            printf("\ndusmana %d hasar verildi!",4*guc);
+                            printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                            haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                            printf("\ndusmanin kalan cani: %d",haydutCan);
+                        } while (can>0 && haydutCan>0);
+                        if(can<=0&&haydutCan>0){
+                            printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                            stres+=30;
+                            if(stres>=100){
+                                stres=100;
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                                printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                            }
+                            else{
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            }
+                            return -1;
+                            break;
+                        }
+                        else if(can>0&&haydutCan<=0){
+                            printf("\nTebrikler! Haydutu yendin");
+                            return 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            else{
+                printf("\nstres seviyen cok fazla!");
+                printf("\nstres seviyesi: %d",stres);
+                printf("\nsavasa girilemiyor.");
+                return -1;
+            }
+                break;
+        default:
+            printf("hatali secim yapildi.");
+            return 0;
+            break;
+    }
+    return 0;
+}
+int zorKesifSavas(int ceviklik, int guc, int can, int dayaniklilik, int stres){
+    srand(time(NULL));
+    int haydutGuc=rand()%4+7;
+    int haydutDayaniklilik=rand()%4+7;
+    int haydutCeviklik=rand()%4+7;
+    int haydutCan=25;
+    int secim;
+    
+    savasiBaslat:
+    
+    printf("\n**Dusman becerileri**");
+    printf("\nguc: %d\tdayaniklilik: %d\tceviklik: %d",haydutGuc,haydutDayaniklilik,haydutCeviklik);
+    printf("\nSaldirmak icin 1, kacmak icin 2 secin: ");
+    scanf("%d",&secim);
+    float kacmaIhtimali=(4*ceviklik)/100;
+    int kacmaDurumu=rand()%99+1;
+    switch (secim) {
+        case 1:
+            if(stres<50){
+                printf("\nsavas basliyor...");
+                if(guc>=haydutGuc){
+                    do {
+                        printf("\ndusmana %d hasar verildi!",4*guc);
+                        printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                        haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                        printf("\ndusmanin kalan cani: %d",haydutCan);
+                        printf("\nhaydut sana saldirdi!");
+                        printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                        can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                        printf("\nkalan can: %d",can);
+                    } while (can>0 && haydutCan>0);
+                    if(can<=0&&haydutCan>0){
+                        printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                        stres+=30;
+                        if(stres>=100){
+                            stres=100;
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                        }
+                        else{
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                        }
+                        return -1;
+                        break;
+                    }
+                    else if(can>0&&haydutCan<=0){
+                        printf("\nTebrikler! Haydutu yendin");
+                        return 1;
+                        break;
+                    }
+                }
+                else{
+                    do {
+                        printf("\nhaydut sana saldirdi!");
+                        printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                        can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                        printf("\nkalan can: %d",can);
+                        printf("\ndusmana %d hasar verildi!",4*guc);
+                        printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                        haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                        printf("\ndusmanin kalan cani: %d",haydutCan);
+                    } while (can>0 && haydutCan>0);
+                    if(can<=0&&haydutCan>0){
+                        printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                        stres+=30;
+                        if(stres>=100){
+                            stres=100;
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                        }
+                        else{
+                            printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                        }
+                        return -1;
+                        break;
+                    }
+                    else if(can>0&&haydutCan<=0){
+                        printf("\nTebrikler! Haydutu yendin");
+                        return 1;
+                        break;
+                    }
+                }
+            }
+            else{
+                printf("\nstres seviyen cok fazla!");
+                printf("\nstres seviyesi: %d",stres);
+                printf("savasa girilemiyor.");
+                return -1;
+            }
+            break;
+        case 2:
+            if(stres<50){
+                if(kacmaDurumu<kacmaIhtimali*100){
+                    printf("\nhayduttan basariyla kacildi.");
+                    return 1;
+                    break;
+                }
+                else{
+                    printf("\nhayduttan kacamadin!Savas basliyor..");
+                    if(guc>=haydutGuc){
+                        do {
+                            printf("\ndusmana %d hasar verildi!",4*guc);
+                            printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                            haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                            printf("\ndusmanin kalan cani: %d",haydutCan);
+                            printf("\nhaydut sana saldirdi!");
+                            printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                            can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                            printf("\nkalan can: %d",can);
+                        } while (can>0 && haydutCan>0);
+                        if(can<=0&&haydutCan>0){
+                            printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                            stres+=30;
+                            if(stres>=100){
+                                stres=100;
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                                printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                            }
+                            else{
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            }
+                            return -1;
+                            break;
+                        }
+                        else if(can>0&&haydutCan<=0){
+                            printf("\nTebrikler! Haydutu yendin");
+                            return 1;
+                            break;
+                        }
+                    }
+                    else{
+                        do {
+                            printf("\nhaydut sana saldirdi!");
+                            printf("\nalinan hasar: %f",(float)4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1));
+                            can-=4*haydutGuc-((4*haydutGuc*(dayaniklilik/100))-1);
+                            printf("\nkalan can: %d",can);
+                            printf("\ndusmana %d hasar verildi!",4*guc);
+                            printf("\ndusmanin cani %f azaldi.",(float)4*guc-((4*guc*(haydutDayaniklilik/100))-1));
+                            haydutCan-=4*guc-((4*guc*(haydutDayaniklilik/100))-1);
+                            printf("\ndusmanin kalan cani: %d",haydutCan);
+                        } while (can>0 && haydutCan>0);
+                        if(can<=0&&haydutCan>0){
+                            printf("\nhayduta yenik dustun...\ncan seviyesi: %d",can);
+                            stres+=30;
+                            if(stres>=100){
+                                stres=100;
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                                printf("stres seviyen cok yuksek! bir sonraki maceraya atilmadan once biraz gevse.");
+                            }
+                            else{
+                                printf("\nsavasta cok gerildin, stresin 30 artti.\nstres seviyesi: %d",stres);
+                            }
+                            return -1;
+                            break;
+                        }
+                        else if(can>0&&haydutCan<=0){
+                            printf("\nTebrikler! Haydutu yendin");
+                            return 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            else{
+                printf("\nstres seviyen cok fazla!");
+                printf("\nstres seviyesi: %d",stres);
+                printf("\nsavasa girilemiyor.");
+                return -1;
+            }
+                break;
+        default:
+            printf("hatali secim yapildi.");
+            return 0;
+            break;
+    }
+    return 0;
+}
+
 

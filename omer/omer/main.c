@@ -15,7 +15,6 @@ int sifahaneGit(void);
 int hanaGit(void);
 int macerayaAtil(void);
 float paraKazan(int karizma, int hijyen);
-void seviyeAtla(int seviye, int tecrube);
 int kolayKesif(float para);
 int ortaKesif(float para);
 int zorKesif(float para);
@@ -102,7 +101,6 @@ int main(int argc, const char * argv[]) {
                         break;
                     case 2:
                         printf("\n^^Nehirde yikaniyorsun,su cok soguk!!");
-                        printf("\U0001F976\n");
                         hijyen+=40;
                         if(hijyen<100){
                             printf("\n\thijyen: %d",hijyen);
@@ -131,7 +129,6 @@ int main(int argc, const char * argv[]) {
                         break;
                     case 3:
                         printf("\n\nzZz..");
-                        printf("\U0001F634\n");
                         uyku+=70;
                         if(uyku<=100){
                             printf("\n\n^^Guzel bir uyku cektin, iyice dinlendin.");
@@ -649,8 +646,12 @@ int main(int argc, const char * argv[]) {
             basla5:
             case 5:
                 if(tecrube>=100){
-                    printf("\nseviye atlaniyor..");
-                    seviyeAtla(seviye, tecrube);
+                    printf("\n^^Seviye atlaniyor..");
+                    seviye++;
+                    tecrube=0;
+                    printf("\n^^yeni seviye: %d",seviye);
+                    printf("\n^^tecrube: %d",tecrube);
+                    printf("\n\n**Mevcut Beceriler**\nguc: %d\tceviklik: %d\tdayaniklilik: %d\tkarizma: %d\ttoplayicilik: %d",guc,ceviklik,dayaniklilik,karizma,toplayicilik);
                     printf("\n5 adet gelistirme puani kazandiniz.Artirmak istediginiz becerileri secin:(Her secim sonrasi enter basin)\n1. Guc\n2. Ceviklik\n3. Karizma\n4. Toplayicilik");
                     for(int i=0;i<5;i++){
                     imlec:
@@ -675,6 +676,8 @@ int main(int argc, const char * argv[]) {
                                 break;
                         }
                     }
+                    printf("\n\n^^Beceri puanlarinin tamami kullanildi.");
+                    printf("\n\n**Beceriler**\nguc: %d\tceviklik: %d\tdayaniklilik: %d\tkarizma: %d\ttoplayicilik: %d",guc,ceviklik,dayaniklilik,karizma,toplayicilik);
                 }
                 else{
                     printf("\nTecrube atlama gereksinimlerini karsilamiyorsunuz, ana menuye yonlendiriliyorsunuz.");
@@ -683,6 +686,7 @@ int main(int argc, const char * argv[]) {
                 case 6:
                     printf("\nOzanin adi: %s",ad);
                     printf("Calginin adi: %s",calgi);
+                    printf("\nseviye: %d",seviye);
                     printf("\n\n**Temel Nitelikler**\ncan: %d\ttokluk: %d\tuyku: %d\thijyen: %d\tstres: %d\tmoral: %d\tsans: %d",can,tokluk,uyku,hijyen,stres,moral,sans);
                     printf("\n\n**Beceriler**\nguc: %d\tceviklik: %d\tdayaniklilik: %d\tkarizma: %d\ttoplayicilik: %d",guc,ceviklik,dayaniklilik,karizma,toplayicilik);
                     printf("\n\nAltin: %.2f",para);
@@ -800,15 +804,7 @@ int zorKesif(float para){
     para+=a;
     return para;
 }
-void seviyeAtla(int seviye, int tecrube){
-    if(tecrube>=100){
-        seviye++;
-        tecrube=0;
-        printf("\n\nYeni statlar:\nseviye:%d\ntecrube:%d",seviye,tecrube);}
-    else{
-        printf("\n\nTecrube atlama gereksinimlerini karsilamiyorsunuz.");
-    }
-}
+
 int sifaliBitkiBulma(void){
     int random= rand()%99+1;
     return random;
